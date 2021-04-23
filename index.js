@@ -1,19 +1,12 @@
 require('dotenv').config();
-const express = require('express');
-const morgan = require('morgan');
+const database = require('./database');
+const { port } = require('./src/config/config');
 
-const { PORT } = require('./src/config/config');
+(async () => {
+    await database.connect();
+    const app = require('./app');
 
-const app = express();
-
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-app.get('/', (req, res) => {
-    res.status(200).json({ message: 'Hello World' });
-});
-
-app.listen(PORT, () => {
-    console.log(`listened in port ${PORT}`);
-});
+    app.listen(port, () => {
+        console.log(`Listened in port ${port}`);
+    });
+})();
