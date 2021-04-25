@@ -1,9 +1,9 @@
 require('dotenv').config();
-const database = require('./database');
+const { connect } = require('./database');
 const { port } = require('./src/config/config');
 
 (async () => {
-    await database.connect();
+    await connect();
     const app = require('./app');
 
     app.listen(port, () => {
