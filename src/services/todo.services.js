@@ -45,7 +45,22 @@ const findOneByID = async (id) => {
             return serviceResponse(false, { error: 'Todo not found' });
         }
 
-        return serviceResponse(true, { message: 'Todo Found' }, [todo]);
+        return serviceResponse(true, { message: 'Todo Found' }, todo);
+    } catch (error) {
+        throw error;
+    }
+}
+
+const changeDone = async ({ _id, done }) => {
+    try {
+        const doneUpdate = !done;
+        const todoChangeDone = await todoModel.updateOne({ _id }, { done: doneUpdate });
+
+        if (!todoChangeDone) {
+            return serviceResponse(false, { error: 'Todo not change done' });
+        }
+        
+        return serviceResponse(true, { message: 'Todo change done' });
     } catch (error) {
         throw error;
     }
@@ -55,5 +70,6 @@ module.exports = {
     verifyCreateFields,
     create,
     findAll,
-    findOneByID
+    findOneByID,
+    changeDone
 }

@@ -56,7 +56,37 @@ const findOneByID = async (req, res) => {
         }
 
         response = controllerResponse(true, 200, TodoExists.content, TodoExists.todo);
-        return res.status(404).json(response);
+        return res.status(200).json(response);
+    } catch (error) {
+        response = controllerResponse(false, 500, { error: "Internal Server Error" });
+        return res.status(500).json(response);
+    }
+}
+
+const changeDone = async (req, res) => {
+    let response = {};
+    const { id } = req.params;
+
+    if (!verifyID(id)) {
+        response = controllerResponse(false, 400, { error: "Error in ID" });
+        return res.status(400).json(response);
+    }
+
+    try {
+        const todoExists = await todoServices.findOneByID(id);
+        if (!todoExists.success) {
+            response = controllerResponse(false, 404, TodoExists.content);
+            return res.status(404).json(response);
+        }
+
+        const todoChangeDone = await todoServices.changeDone(todoExists.todo);
+        if(!todoChangeDone.success) {
+            response = controllerResponse(false, 409, todoChangeDone.content);
+            return res.status(409).json(response);
+        }
+        
+        response = controllerResponse(true, 200, todoChangeDone.content);
+        return res.status(200).json(response);
     } catch (error) {
         response = controllerResponse(false, 500, { error: "Internal Server Error" });
         return res.status(500).json(response);
@@ -76,5 +106,6 @@ module.exports = {
     findAll,
     findOneByID,
     updateOneByID,
-    deleteOneByID
+    deleteOneByID,
+    changeDone
 }
