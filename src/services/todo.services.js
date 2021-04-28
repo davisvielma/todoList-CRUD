@@ -80,15 +80,29 @@ const changeDone = async ({ _id, done }) => {
 
 const updateOneByID = async ({ _id }, contentToUpdate) => {
     try {
-        const todoUpdate = await todoModel.updateOne({ _id }, { $set: contentToUpdate });
+        const todoUpdated = await todoModel.updateOne({ _id }, { $set: contentToUpdate });
 
-        if (!todoUpdate) {
+        if (!todoUpdated) {
             return serviceResponse(false, { error: 'Todo not updated' });
         }
 
         return serviceResponse(true, { message: 'Todo updated' });
     } catch (error) {
-        throw error
+        throw error;
+    }
+}
+
+const deleteOneByID = async ({ _id }) => {
+    try {
+        const todoDeleted = await todoModel.deleteOne({ _id });
+
+        if (!todoDeleted) {
+            return serviceResponse(false, { error: 'Todo could not be deleted' });
+        }
+
+        return serviceResponse(true, { message: 'Todo remove' });
+    } catch (error) {
+        throw error;
     }
 }
 
@@ -99,5 +113,6 @@ module.exports = {
     findAll,
     findOneByID,
     changeDone,
-    updateOneByID
+    updateOneByID,
+    deleteOneByID
 }

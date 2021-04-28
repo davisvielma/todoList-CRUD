@@ -115,13 +115,13 @@ const updateOneByID = async (req, res) => {
             return res.status(404).json(response);
         }
 
-        const todoUpdate = await todoServices.updateOneByID(todoExists.todo, fieldVerifed.todo);
-        if (!todoUpdate.success) {
-            response = controllerResponse(false, 409, todoUpdate.content);
+        const todoUpdated = await todoServices.updateOneByID(todoExists.todo, fieldVerifed.todo);
+        if (!todoUpdated.success) {
+            response = controllerResponse(false, 409, todoUpdated.content);
             return res.status(409).json(response);
         }
 
-        response = controllerResponse(true, 200, todoUpdate.content);
+        response = controllerResponse(true, 200, todoUpdated.content);
         return res.status(200).json(response);
     } catch (error) {
         response = controllerResponse(false, 500, { error: "Internal Server Error" });
@@ -129,7 +129,37 @@ const updateOneByID = async (req, res) => {
     }
 }
 
-const deleteOneByID = (req, res) => {
+const deleteOneByID = async (req, res) => {
+    let response = {};
+    const { id } = req.params;
+
+    if (!verifyID(id)) {
+        response = controllerResponse(false, 400, { error: "Error in ID" });
+        return res.status(400).json(response);
+    }
+
+    try {
+        const todoExists = await todoServices.findOneByID(id);
+        if (!todoExists.success) {
+            response = controllerResponse(false, 404, todoExists.content);
+            return res.status(404).json(response);
+        }
+
+        const todoDeleted = await todoServices.deleteOneByID(todoExists.todo);
+        if (!todoDeleted.success) {
+            response = controllerResponse(false, 409, todoDeleted.content);
+            return res.status(409).json(response);
+        }
+
+        response = controllerResponse(true, 200, todoDeleted.content);
+        return res.status(200).json(response);
+    } catch (error) {
+        response = controllerResponse(false, 500, { error: "Internal Server Error" });
+        return res.status(500).json(response);
+    }
+
+
+
     res.send('todo delete');
 }
 
